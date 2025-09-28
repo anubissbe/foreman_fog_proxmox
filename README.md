@@ -34,7 +34,7 @@ You can support the plugin development via the following methods:
 |>=0.12 |>=6.1|>=0.11|>=2.0|>=2.5|
 |>=0.14 |>=6.2|=0.13.0|>=2.4|>=2.7|
 |>=0.14 |>=6.2|>=0.13.1|>=2.3|>=2.5|
-|>=0.14 |>=6.2,<8.0|>=0.14.0|>=2.5|>=2.5|
+|>=0.14 |>=6.2,<10.0|>=0.14.0|>=2.5|>=2.5|
 
 ## Installation
 
@@ -130,7 +130,7 @@ Then you can check plugin installation after login into your new foreman server 
 
 > See [Foreman dev setup](https://github.com/theforeman/foreman/blob/develop/developer_docs/foreman_dev_setup.asciidoc)
 
-* You need a Proxmox VE 6.2+ server running.
+* You need a Proxmox VE 6.2+ server running (tested through Proxmox VE 9).
 * You need ruby 2.7. You can install it with [asdf-vm](https://asdf-vm.com).
 * You also need nodejs 14 in your dev machine to run webpack-dev-server. You can install it with [asdf-vm](https://asdf-vm.com).
 
