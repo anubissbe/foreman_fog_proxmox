@@ -145,7 +145,7 @@ module ForemanFogProxmox
     end
 
     def token_expired?(e)
-      e.response.reason_phrase == 'token expired'
+      error_reason(e) == 'token expired'
     end
 
     def client
@@ -176,9 +176,20 @@ module ForemanFogProxmox
     end
 
     def error_message(e)
-      "Failed to create Proxmox compute resource: #{e.response.reason_phrase}.
+      reason = error_reason(e) || e.message
+
+      "Failed to create Proxmox compute resource: #{reason}.
        Either provided credentials or FQDN is wrong or
        your server cannot connect to Proxmox due to network issues."
+    end
+
+    def error_reason(e)
+      return unless e.respond_to?(:response)
+
+      response = e.response
+      return unless response
+
+      response.reason_phrase if response.respond_to?(:reason_phrase)
     end
 
     def proxmox_host

@@ -54,5 +54,37 @@ module ForemanFogProxmox
       cr.stubs(:node).returns(node)
       assert_equal node, (as_admin { cr.node })
     end
+
+    test 'error message falls back to exception message when no response is available' do
+      cr = FactoryBot.build_stubbed(:proxmox_cr)
+      socket_error = Excon::Error::Socket.new('Permission denied - connect(2) for 192.168.1.1:8006')
+
+      message = cr.send(:error_message, socket_error)
+
+      assert_includes message, 'Permission denied - connect(2) for 192.168.1.1:8006'
+    end
+
+    test 'error message prefers response reason phrase when available' do
+      cr = FactoryBot.build_stubbed(:proxmox_cr)
+
+      error_class = Class.new(StandardError) do
+        attr_reader :response
+
+        def initialize(reason)
+          @response = Struct.new(:reason_phrase).new(reason)
+        end
+      end
+
+      message = cr.send(:error_message, error_class.new('token expired'))
+
+      assert_includes message, 'token expired'
+    end
+
+    test 'token expired check handles errors without a response' do
+      cr = FactoryBot.build_stubbed(:proxmox_cr)
+      socket_error = Excon::Error::Socket.new('Permission denied - connect(2) for 192.168.1.1:8006')
+
+      refute cr.send(:token_expired?, socket_error)
+    end
   end
 end
