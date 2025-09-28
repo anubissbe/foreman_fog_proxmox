@@ -18,55 +18,58 @@
 # along with ForemanFogProxmox. If not, see <http://www.gnu.org/licenses/>.
 
 module ProxmoxComputeSelectorsHelper
-  def proxmox_types_map
-    [OpenStruct.new(id: 'qemu', name: 'KVM/Qemu server'),
-     OpenStruct.new(id: 'lxc', name: 'LXC container')]
-  end
+  TYPES = [
+    ['qemu', 'KVM/Qemu server'],
+    ['lxc', 'LXC container'],
+  ].freeze
 
-  def proxmox_archs_map
-    [OpenStruct.new(id: 'amd64', name: '64 bits'),
-     OpenStruct.new(id: 'i386', name: '32 bits')]
-  end
+  ARCHS = [
+    ['amd64', '64 bits'],
+    ['i386', '32 bits'],
+  ].freeze
 
-  def proxmox_ostypes_map
-    [OpenStruct.new(id: 'debian', name: 'Debian'),
-     OpenStruct.new(id: 'ubuntu', name: 'Ubuntu'),
-     OpenStruct.new(id: 'centos', name: 'CentOS'),
-     OpenStruct.new(id: 'fedora', name: 'Fedora'),
-     OpenStruct.new(id: 'opensuse', name: 'OpenSuse'),
-     OpenStruct.new(id: 'archlinux', name: 'ArchLinux'),
-     OpenStruct.new(id: 'gentoo', name: 'Gentoo'),
-     OpenStruct.new(id: 'alpine', name: 'Alpine'),
-     OpenStruct.new(id: 'unmanaged', name: 'Unmanaged')]
-  end
+  CONTAINER_OSTYPES = [
+    ['alpine', 'Alpine'],
+    ['archlinux', 'ArchLinux'],
+    ['centos', 'CentOS'],
+    ['debian', 'Debian'],
+    ['devuan', 'Devuan'],
+    ['fedora', 'Fedora'],
+    ['gentoo', 'Gentoo'],
+    ['nixos', 'NixOS'],
+    ['opensuse', 'OpenSuse'],
+    ['ubuntu', 'Ubuntu'],
+    ['unmanaged', 'Unmanaged'],
+  ].freeze
 
-  def proxmox_operating_systems_map
-    [OpenStruct.new(id: 'other', name: 'Unspecified OS'),
-     OpenStruct.new(id: 'wxp', name: 'Microsoft Windows XP'),
-     OpenStruct.new(id: 'w2k', name: 'Microsoft Windows 2000'),
-     OpenStruct.new(id: 'w2k3', name: 'Microsoft Windows 2003'),
-     OpenStruct.new(id: 'w2k8', name: 'Microsoft Windows 2008'),
-     OpenStruct.new(id: 'wvista', name: 'Microsoft Windows Vista'),
-     OpenStruct.new(id: 'win7', name: 'Microsoft Windows 7'),
-     OpenStruct.new(id: 'win8', name: 'Microsoft Windows 8/2012/2012r2'),
-     OpenStruct.new(id: 'win10', name: 'Microsoft Windows 10/2016'),
-     OpenStruct.new(id: 'l24', name: 'Linux 2.4 Kernel'),
-     OpenStruct.new(id: 'l26', name: 'Linux 2.6/3.X + Kernel'),
-     OpenStruct.new(id: 'solaris', name: 'Solaris/OpenSolaris/OpenIndiania kernel')]
-  end
+  VM_OSTYPES = [
+    ['other', 'Unspecified OS'],
+    ['wxp', 'Microsoft Windows XP'],
+    ['w2k', 'Microsoft Windows 2000'],
+    ['w2k3', 'Microsoft Windows 2003'],
+    ['w2k8', 'Microsoft Windows 2008'],
+    ['wvista', 'Microsoft Windows Vista'],
+    ['win7', 'Microsoft Windows 7'],
+    ['win8', 'Microsoft Windows 8/2012/2012r2'],
+    ['win10', 'Microsoft Windows 10/2016/2019'],
+    ['win11', 'Microsoft Windows 11/2022/2025'],
+    ['l24', 'Linux 2.4 Kernel'],
+    ['l26', 'Linux 2.6/3.X + Kernel'],
+    ['solaris', 'Solaris/OpenSolaris/OpenIndiania kernel'],
+  ].freeze
 
-  def proxmox_vgas_map
-    [OpenStruct.new(id: 'std', name: 'Standard VGA'),
-     OpenStruct.new(id: 'vmware', name: 'Vmware compatible'),
-     OpenStruct.new(id: 'qxl', name: 'SPICE'),
-     OpenStruct.new(id: 'qxl2', name: 'SPICE 2 monnitors'),
-     OpenStruct.new(id: 'qxl3', name: 'SPICE 3 monnitors'),
-     OpenStruct.new(id: 'qxl4', name: 'SPICE 4 monnitors'),
-     OpenStruct.new(id: 'serial0', name: 'Serial terminal 0'),
-     OpenStruct.new(id: 'serial1', name: 'Serial terminal 1'),
-     OpenStruct.new(id: 'serial2', name: 'Serial terminal 2'),
-     OpenStruct.new(id: 'serial3', name: 'Serial terminal 3')]
-  end
+  VGAS = [
+    ['std', 'Standard VGA'],
+    ['vmware', 'Vmware compatible'],
+    ['qxl', 'SPICE'],
+    ['qxl2', 'SPICE 2 monnitors'],
+    ['qxl3', 'SPICE 3 monnitors'],
+    ['qxl4', 'SPICE 4 monnitors'],
+    ['serial0', 'Serial terminal 0'],
+    ['serial1', 'Serial terminal 1'],
+    ['serial2', 'Serial terminal 2'],
+    ['serial3', 'Serial terminal 3'],
+  ].freeze
 
   def get_controller(id)
     proxmox_controllers_map.find { |controller| controller.id == id }
@@ -85,36 +88,111 @@ module ProxmoxComputeSelectorsHelper
      OpenStruct.new(id: 'none', name: 'No cache')]
   end
 
+  CPU_TYPES = [
+    ['486', '486'],
+    ['athlon', 'athlon'],
+    ['Broadwell', 'Broadwell'],
+    ['Broadwell-IBRS', 'Broadwell-IBRS'],
+    ['Broadwell-noTSX', 'Broadwell-noTSX'],
+    ['Broadwell-noTSX-IBRS', 'Broadwell-noTSX-IBRS'],
+    ['Cascadelake-Server', 'Cascadelake-Server'],
+    ['Cascadelake-Server-noTSX', 'Cascadelake-Server-noTSX'],
+    ['Cascadelake-Server-v2', 'Cascadelake-Server-v2'],
+    ['Cascadelake-Server-v4', 'Cascadelake-Server-v4'],
+    ['Cascadelake-Server-v5', 'Cascadelake-Server-v5'],
+    ['Conroe', 'Conroe'],
+    ['Cooperlake', 'Cooperlake'],
+    ['Cooperlake-v2', 'Cooperlake-v2'],
+    ['core2duo', 'core2duo'],
+    ['coreduo', 'coreduo'],
+    ['EPYC', 'EPYC'],
+    ['EPYC-Genoa', 'EPYC-Genoa'],
+    ['EPYC-IBPB', 'EPYC-IBPB'],
+    ['EPYC-Milan', 'EPYC-Milan'],
+    ['EPYC-Milan-v2', 'EPYC-Milan-v2'],
+    ['EPYC-Rome', 'EPYC-Rome'],
+    ['EPYC-Rome-v2', 'EPYC-Rome-v2'],
+    ['EPYC-Rome-v3', 'EPYC-Rome-v3'],
+    ['EPYC-Rome-v4', 'EPYC-Rome-v4'],
+    ['EPYC-v3', 'EPYC-v3'],
+    ['EPYC-v4', 'EPYC-v4'],
+    ['GraniteRapids', 'GraniteRapids'],
+    ['Haswell', 'Haswell'],
+    ['Haswell-IBRS', 'Haswell-IBRS'],
+    ['Haswell-noTSX', 'Haswell-noTSX'],
+    ['Haswell-noTSX-IBRS', 'Haswell-noTSX-IBRS'],
+    ['host', 'host'],
+    ['Icelake-Client', 'Icelake-Client'],
+    ['Icelake-Client-noTSX', 'Icelake-Client-noTSX'],
+    ['Icelake-Server', 'Icelake-Server'],
+    ['Icelake-Server-noTSX', 'Icelake-Server-noTSX'],
+    ['Icelake-Server-v3', 'Icelake-Server-v3'],
+    ['Icelake-Server-v4', 'Icelake-Server-v4'],
+    ['Icelake-Server-v5', 'Icelake-Server-v5'],
+    ['Icelake-Server-v6', 'Icelake-Server-v6'],
+    ['IvyBridge', 'IvyBridge'],
+    ['IvyBridge-IBRS', 'IvyBridge-IBRS'],
+    ['KnightsMill', 'KnightsMill'],
+    ['kvm32', 'kvm32'],
+    ['kvm64', '(Default) kvm64'],
+    ['max', 'max'],
+    ['Nehalem', 'Nehalem'],
+    ['Nehalem-IBRS', 'Nehalem-IBRS'],
+    ['Opteron_G1', 'Opteron_G1'],
+    ['Opteron_G2', 'Opteron_G2'],
+    ['Opteron_G3', 'Opteron_G3'],
+    ['Opteron_G4', 'Opteron_G4'],
+    ['Opteron_G5', 'Opteron_G5'],
+    ['Penryn', 'Penryn'],
+    ['pentium', 'pentium'],
+    ['pentium2', 'pentium2'],
+    ['pentium3', 'pentium3'],
+    ['phenom', 'phenom'],
+    ['qemu32', 'qemu32'],
+    ['qemu64', 'qemu64'],
+    ['SandyBridge', 'SandyBridge'],
+    ['SandyBridge-IBRS', 'SandyBridge-IBRS'],
+    ['SapphireRapids', 'SapphireRapids'],
+    ['SapphireRapids-v2', 'SapphireRapids-v2'],
+    ['Skylake-Client', 'Skylake-Client'],
+    ['Skylake-Client-IBRS', 'Skylake-Client-IBRS'],
+    ['Skylake-Client-noTSX-IBRS', 'Skylake-Client-noTSX-IBRS'],
+    ['Skylake-Client-v4', 'Skylake-Client-v4'],
+    ['Skylake-Server', 'Skylake-Server'],
+    ['Skylake-Server-IBRS', 'Skylake-Server-IBRS'],
+    ['Skylake-Server-noTSX-IBRS', 'Skylake-Server-noTSX-IBRS'],
+    ['Skylake-Server-v4', 'Skylake-Server-v4'],
+    ['Skylake-Server-v5', 'Skylake-Server-v5'],
+    ['Westmere', 'Westmere'],
+    ['Westmere-IBRS', 'Westmere-IBRS'],
+    ['x86-64-v2', 'x86-64-v2'],
+    ['x86-64-v2-AES', 'x86-64-v2-AES'],
+    ['x86-64-v3', 'x86-64-v3'],
+    ['x86-64-v4', 'x86-64-v4'],
+  ].freeze
+
+  def proxmox_types_map
+    TYPES.map { |id, name| OpenStruct.new(id: id, name: name) }
+  end
+
+  def proxmox_archs_map
+    ARCHS.map { |id, name| OpenStruct.new(id: id, name: name) }
+  end
+
+  def proxmox_ostypes_map
+    CONTAINER_OSTYPES.map { |id, name| OpenStruct.new(id: id, name: name) }
+  end
+
+  def proxmox_operating_systems_map
+    VM_OSTYPES.map { |id, name| OpenStruct.new(id: id, name: name) }
+  end
+
+  def proxmox_vgas_map
+    VGAS.map { |id, name| OpenStruct.new(id: id, name: name) }
+  end
+
   def proxmox_cpus_map
-    [OpenStruct.new(id: '486', name: '486'),
-     OpenStruct.new(id: 'athlon', name: 'athlon'),
-     OpenStruct.new(id: 'core2duo', name: 'core2duo'),
-     OpenStruct.new(id: 'coreduo', name: 'coreduo'),
-     OpenStruct.new(id: 'kvm32', name: 'kvm32'),
-     OpenStruct.new(id: 'kvm64', name: '(Default) kvm64'),
-     OpenStruct.new(id: 'pentium', name: 'pentium'),
-     OpenStruct.new(id: 'pentium2', name: 'pentium2'),
-     OpenStruct.new(id: 'pentium3', name: 'pentium3'),
-     OpenStruct.new(id: 'phenom', name: 'phenom'),
-     OpenStruct.new(id: 'qemu32', name: 'qemu32'),
-     OpenStruct.new(id: 'qemu64', name: 'qemu64'),
-     OpenStruct.new(id: 'Conroe', name: 'Conroe'),
-     OpenStruct.new(id: 'Penryn', name: 'Penryn'),
-     OpenStruct.new(id: 'Nehalem', name: 'Nehalem'),
-     OpenStruct.new(id: 'Westmere', name: 'Westmere'),
-     OpenStruct.new(id: 'SandyBridge', name: 'SandyBridge'),
-     OpenStruct.new(id: 'IvyBridge', name: 'IvyBridge'),
-     OpenStruct.new(id: 'Haswell', name: 'Haswell'),
-     OpenStruct.new(id: 'Haswell-noTSX', name: 'Haswell-noTSX'),
-     OpenStruct.new(id: 'Broadwell', name: 'Broadwell'),
-     OpenStruct.new(id: 'Broadwell-noTSX', name: 'Broadwell-noTSX'),
-     OpenStruct.new(id: 'Skylake-Client', name: 'Skylake-Client'),
-     OpenStruct.new(id: 'Opteron_G1', name: 'Opteron_G1'),
-     OpenStruct.new(id: 'Opteron_G2', name: 'Opteron_G2'),
-     OpenStruct.new(id: 'Opteron_G3', name: 'Opteron_G3'),
-     OpenStruct.new(id: 'Opteron_G4', name: 'Opteron_G4'),
-     OpenStruct.new(id: 'Opteron_G5', name: 'Opteron_G5'),
-     OpenStruct.new(id: 'host', name: 'host')]
+    CPU_TYPES.map { |id, name| OpenStruct.new(id: id, name: name) }
   end
 
   def proxmox_cpu_flags_map

@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Features
+
+* Align OS and CPU selectors with Proxmox VE 9 to support new guest types.
+
 ## [0.18.1](https://github.com/theforeman/foreman_fog_proxmox/compare/v0.18.0...v0.18.1) (2025-02-27)
 
 
