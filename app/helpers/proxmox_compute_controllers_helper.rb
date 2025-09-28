@@ -17,24 +17,31 @@
 # You should have received a copy of the GNU General Public License
 # along with ForemanFogProxmox. If not, see <http://www.gnu.org/licenses/>.
 
+require 'foreman_fog_proxmox/selector_catalogue'
+
 module ProxmoxComputeControllersHelper
+  CONTROLLER_VIRTIO = 'virtio'
+
   def proxmox_controllers_map
-    proxmox_controllers_cloudinit_map << ForemanFogProxmox::OptionsSelect.new(name: 'VirtIO Block', id: 'virtio',
-      range: 15)
+    controller_entries.map { |entry| build_controller_option(entry) }
   end
 
   def proxmox_controllers_cloudinit_map
-    [ForemanFogProxmox::OptionsSelect.new(id: 'ide', name: 'IDE', range: 3),
-     ForemanFogProxmox::OptionsSelect.new(id: 'sata', name: 'SATA', range: 5),
-     ForemanFogProxmox::OptionsSelect.new(id: 'scsi', name: 'SCSI', range: 13)]
+    controller_entries.reject { |entry| entry[:value] == CONTROLLER_VIRTIO }
+                     .map { |entry| build_controller_option(entry) }
   end
 
   def proxmox_scsi_controllers_map
-    [OpenStruct.new(id: 'lsi', name: 'LSI 53C895A (Default)'),
-     OpenStruct.new(id: 'lsi53c810', name: 'LSI 53C810'),
-     OpenStruct.new(id: 'virtio-scsi-pci', name: 'VirtIO SCSI'),
-     OpenStruct.new(id: 'virtio-scsi-single', name: 'VirtIO SCSI Single'),
-     OpenStruct.new(id: 'megasas', name: 'MegaRAID SAS 8708EM2'),
-     OpenStruct.new(id: 'pvscsi', name: 'VMware PVSCSI')]
+    ForemanFogProxmox::SelectorCatalogue.options_for(:scsi_controllers)
+  end
+
+  private
+
+  def controller_entries
+    ForemanFogProxmox::SelectorCatalogue.entries_for(:controllers)
+  end
+
+  def build_controller_option(entry)
+    ForemanFogProxmox::OptionsSelect.new(id: entry[:value], name: entry[:label], range: entry[:range])
   end
 end

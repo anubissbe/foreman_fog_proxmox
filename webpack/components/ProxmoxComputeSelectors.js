@@ -1,196 +1,35 @@
+// eslint-disable-next-line import/extensions
+import selectorsCatalogue from '../../config/proxmox_selectors.json';
+
+const toOptions = options =>
+  options.map(({ value, label }) => ({ value, label }));
+
+const {
+  controllers,
+  vm_operating_systems: vmOperatingSystems,
+} = selectorsCatalogue;
+const visibleVmOperatingSystems = vmOperatingSystems.filter(
+  option => !option.hidden
+);
+
 const ProxmoxComputeSelectors = {
-  proxmoxTypesMap: [
-    { value: 'qemu', label: 'KVM/Qemu server' },
-    { value: 'lxc', label: 'LXC container' },
-  ],
-
-  proxmoxControllersCloudinitMap: [
-    { value: 'ide', label: 'IDE' },
-    { value: 'sata', label: 'SATA' },
-    { value: 'scsi', label: 'SCSI' },
-  ],
-
-  proxmoxScsiControllersMap: [
-    { value: 'lsi', label: 'LSI 53C895A (Default)' },
-    { value: 'lsi53c810', label: 'LSI 53C810' },
-    { value: 'virtio-scsi-pci', label: 'VirtIO SCSI' },
-    { value: 'virtio-scsi-single', label: 'VirtIO SCSI Single' },
-    { value: 'megasas', label: 'MegaRAID SAS 8708EM2' },
-    { value: 'pvscsi', label: 'VMware PVSCSI' },
-  ],
-
-  proxmoxArchsMap: [
-    { value: 'amd64', label: '64 bits' },
-    { value: 'i386', label: '32 bits' },
-  ],
-
-  proxmoxOstypesMap: [
-    { value: 'alpine', label: 'Alpine' },
-    { value: 'archlinux', label: 'ArchLinux' },
-    { value: 'centos', label: 'CentOS' },
-    { value: 'debian', label: 'Debian' },
-    { value: 'devuan', label: 'Devuan' },
-    { value: 'fedora', label: 'Fedora' },
-    { value: 'gentoo', label: 'Gentoo' },
-    { value: 'nixos', label: 'NixOS' },
-    { value: 'opensuse', label: 'OpenSuse' },
-    { value: 'ubuntu', label: 'Ubuntu' },
-    { value: 'unmanaged', label: 'Unmanaged' },
-  ],
-
-  proxmoxOperatingSystemsMap: [
-    { value: 'other', label: 'Unspecified OS' },
-    { value: 'wxp', label: 'Microsoft Windows XP' },
-    { value: 'w2k', label: 'Microsoft Windows 2000' },
-    { value: 'w2k3', label: 'Microsoft Windows 2003' },
-    { value: 'w2k8', label: 'Microsoft Windows 2008' },
-    { value: 'wvista', label: 'Microsoft Windows Vista' },
-    { value: 'win7', label: 'Microsoft Windows 7' },
-    { value: 'win8', label: 'Microsoft Windows 8/2012/2012r2' },
-    { value: 'win10', label: 'Microsoft Windows 10/2016/2019' },
-    { value: 'win11', label: 'Microsoft Windows 11/2022/2025' },
-    { value: 'l24', label: 'Linux 2.4 Kernel' },
-    { value: 'l26', label: 'Linux 2.6/3.X + Kernel' },
-    { value: 'solaris', label: 'Solaris/OpenSolaris/OpenIndiania kernel' },
-  ],
-
-  proxmoxVgasMap: [
-    { value: '', labal: '' },
-    { value: 'std', label: 'Standard VGA' },
-    { value: 'vmware', label: 'Vmware compatible' },
-    { value: 'qxl', label: 'SPICE' },
-    { value: 'qxl2', label: 'SPICE 2 monitors' },
-    { value: 'qxl3', label: 'SPICE 3 monitors' },
-    { value: 'qxl4', label: 'SPICE 4 monitors' },
-    { value: 'serial0', label: 'Serial terminal 0' },
-    { value: 'serial1', label: 'Serial terminal 1' },
-    { value: 'serial2', label: 'Serial terminal 2' },
-    { value: 'serial3', label: 'Serial terminal 3' },
-  ],
-
-  proxmoxCachesMap: [
-    { value: '', labal: '' },
-    { value: 'directsync', label: 'Direct sync' },
-    { value: 'writethrough', label: 'Write through' },
-    { value: 'writeback', label: 'Write back' },
-    { value: 'unsafe', label: 'Write back unsafe' },
-    { value: 'none', label: 'No cache' },
-  ],
-
-  proxmoxCpusMap: [
-    { value: 'athlon', label: 'athlon' },
-    { value: 'EPYC', label: 'EPYC' },
-    { value: 'EPYC-Genoa', label: 'EPYC-Genoa' },
-    { value: 'EPYC-IBPB', label: 'EPYC-IBPB' },
-    { value: 'EPYC-Milan', label: 'EPYC-Milan' },
-    { value: 'EPYC-Milan-v2', label: 'EPYC-Milan-v2' },
-    { value: 'EPYC-Rome', label: 'EPYC-Rome' },
-    { value: 'EPYC-Rome-v2', label: 'EPYC-Rome-v2' },
-    { value: 'EPYC-Rome-v3', label: 'EPYC-Rome-v3' },
-    { value: 'EPYC-Rome-v4', label: 'EPYC-Rome-v4' },
-    { value: 'EPYC-v3', label: 'EPYC-v3' },
-    { value: 'EPYC-v4', label: 'EPYC-v4' },
-    { value: 'Opteron_G1', label: 'Opteron_G1' },
-    { value: 'Opteron_G2', label: 'Opteron_G2' },
-    { value: 'Opteron_G3', label: 'Opteron_G3' },
-    { value: 'Opteron_G4', label: 'Opteron_G4' },
-    { value: 'Opteron_G5', label: 'Opteron_G5' },
-    { value: 'phenom', label: 'phenom' },
-    { value: '486', label: '486' },
-    { value: 'Broadwell', label: 'Broadwell' },
-    { value: 'Broadwell-IBRS', label: 'Broadwell-IBRS' },
-    { value: 'Broadwell-noTSX', label: 'Broadwell-noTSX' },
-    { value: 'Broadwell-noTSX-IBRS', label: 'Broadwell-noTSX-IBRS' },
-    { value: 'Cascadelake-Server', label: 'Cascadelake-Server' },
-    { value: 'Cascadelake-Server-noTSX', label: 'Cascadelake-Server-noTSX' },
-    { value: 'Cascadelake-Server-v2', label: 'Cascadelake-Server-v2' },
-    { value: 'Cascadelake-Server-v4', label: 'Cascadelake-Server-v4' },
-    { value: 'Cascadelake-Server-v5', label: 'Cascadelake-Server-v5' },
-    { value: 'Conroe', label: 'Conroe' },
-    { value: 'Cooperlake', label: 'Cooperlake' },
-    { value: 'Cooperlake-v2', label: 'Cooperlake-v2' },
-    { value: 'GraniteRapids', label: 'GraniteRapids' },
-    { value: 'core2duo', label: 'core2duo' },
-    { value: 'coreduo', label: 'coreduo' },
-    { value: 'Haswell', label: 'Haswell' },
-    { value: 'Haswell-IBRS', label: 'Haswell-IBRS' },
-    { value: 'Haswell-noTSX', label: 'Haswell-noTSX' },
-    { value: 'Haswell-noTSX-IBRS', label: 'Haswell-noTSX-IBRS' },
-    { value: 'Icelake-Client', label: 'Icelake-Client' },
-    { value: 'Icelake-Client-noTSX', label: 'Icelake-Client-noTSX' },
-    { value: 'Icelake-Server', label: 'Icelake-Server' },
-    { value: 'Icelake-Server-noTSX', label: 'Icelake-Server-noTSX' },
-    { value: 'Icelake-Server-v3', label: 'Icelake-Server-v3' },
-    { value: 'Icelake-Server-v4', label: 'Icelake-Server-v4' },
-    { value: 'Icelake-Server-v5', label: 'Icelake-Server-v5' },
-    { value: 'Icelake-Server-v6', label: 'Icelake-Server-v6' },
-    { value: 'IvyBridge', label: 'IvyBridge' },
-    { value: 'IvyBridge-IBRS', label: 'IvyBridge-IBRS' },
-    { value: 'KnightsMill', label: 'KnightsMill' },
-    { value: 'Nehalem', label: 'Nehalem' },
-    { value: 'Nehalem-IBRS', label: 'Nehalem-IBRS' },
-    { value: 'Penryn', label: 'Penryn' },
-    { value: 'pentium', label: 'pentium' },
-    { value: 'pentium2', label: 'pentium2' },
-    { value: 'pentium3', label: 'pentium3' },
-    { value: 'SandyBridge', label: 'SandyBridge' },
-    { value: 'SandyBridge-IBRS', label: 'SandyBridge-IBRS' },
-    { value: 'SapphireRapids', label: 'SapphireRapids' },
-    { value: 'SapphireRapids-v2', label: 'SapphireRapids-v2' },
-    { value: 'Skylake-Client', label: 'Skylake-Client' },
-    { value: 'Skylake-Client-IBRS', label: 'Skylake-Client-IBRS' },
-    { value: 'Skylake-Client-noTSX-IBRS', label: 'Skylake-Client-noTSX-IBRS' },
-    { value: 'Skylake-Client-v4', label: 'Skylake-Client-v4' },
-    { value: 'Skylake-Server', label: 'Skylake-Server' },
-    { value: 'Skylake-Server-IBRS', label: 'Skylake-Server-IBRS' },
-    { value: 'Skylake-Server-noTSX-IBRS', label: 'Skylake-Server-noTSX-IBRS' },
-    { value: 'Skylake-Server-v4', label: 'Skylake-Server-v4' },
-    { value: 'Skylake-Server-v5', label: 'Skylake-Server-v5' },
-    { value: 'Westmere', label: 'Westmere' },
-    { value: 'Westmere-IBRS', label: 'Westmere-IBRS' },
-    { value: 'kvm32', label: 'kvm32' },
-    { value: 'kvm64', label: '(Default) kvm64' },
-    { value: 'max', label: 'max' },
-    { value: 'qemu32', label: 'qemu32' },
-    { value: 'qemu64', label: 'qemu64' },
-    { value: 'x86-64-v2', label: 'x86-64-v2' },
-    { value: 'x86-64-v2-AES', label: 'x86-64-v2-AES' },
-    { value: 'x86-64-v3', label: 'x86-64-v3' },
-    { value: 'x86-64-v4', label: 'x86-64-v4' },
-    { value: 'host', label: 'host' },
-  ],
-
-  proxmoxCpuFlagsMap: [
-    { value: '-1', label: 'Off' },
-    { value: '0', label: 'Default' },
-    { value: '+1', label: 'On' },
-  ],
-
-  proxmoxScsihwMap: [
-    { value: 'lsi', label: 'lsi' },
-    { value: 'lsi53c810', label: 'lsi53c810' },
-    { value: 'megasas', label: 'megasas' },
-    { value: 'virtio-scsi-pci', label: 'virtio-scsi-pci' },
-    { value: 'virtio-scsi-single', label: 'virtio-scsi-single' },
-    { value: 'pvscsi', label: 'pvscsi' },
-  ],
-
-  proxmoxNetworkcardsMap: [
-    { value: 'e1000', label: 'Intel E1000' },
-    { value: 'virtio', label: 'VirtIO (paravirtualized)' },
-    { value: 'rtl8139', label: 'Realtek RTL8139' },
-    { value: 'vmxnet3', label: 'VMware vmxnet3' },
-  ],
-
-  proxmoxBiosMap: [
-    { value: 'seabios', label: '(Default) Seabios' },
-    { value: 'ovmf', label: 'OVMF (UEFI)' },
-  ],
+  proxmoxTypesMap: toOptions(selectorsCatalogue.types),
+  proxmoxControllersCloudinitMap: toOptions(
+    controllers.filter(({ value }) => value !== 'virtio')
+  ),
+  proxmoxScsiControllersMap: toOptions(selectorsCatalogue.scsi_controllers),
+  proxmoxArchsMap: toOptions(selectorsCatalogue.archs),
+  proxmoxOstypesMap: toOptions(selectorsCatalogue.container_operating_systems),
+  proxmoxOperatingSystemsMap: toOptions(visibleVmOperatingSystems),
+  proxmoxVgasMap: toOptions(selectorsCatalogue.vgas),
+  proxmoxCachesMap: toOptions(selectorsCatalogue.caches),
+  proxmoxCpusMap: toOptions(selectorsCatalogue.cpu_types),
+  proxmoxCpuFlagsMap: toOptions(selectorsCatalogue.cpu_flags),
+  proxmoxScsihwMap: toOptions(selectorsCatalogue.scsi_controllers),
+  proxmoxNetworkcardsMap: toOptions(selectorsCatalogue.network_cards),
+  proxmoxBiosMap: toOptions(selectorsCatalogue.bios),
 };
 
-ProxmoxComputeSelectors.proxmoxControllersHDDMap = [
-  ...ProxmoxComputeSelectors.proxmoxControllersCloudinitMap,
-  { value: 'virtio', label: 'VirtIO Block' },
-];
+ProxmoxComputeSelectors.proxmoxControllersHDDMap = toOptions(controllers);
 
 export default ProxmoxComputeSelectors;
