@@ -127,20 +127,28 @@ module ForemanFogProxmox
     private
 
     def fog_credentials
+      inline_credentials = inline_token_credentials
+
       hash = {
         proxmox_url: url,
         proxmox_auth_method: auth_method || 'access_ticket',
         connection_options: connection_options,
       }
-      if access_ticket?
-        hash[:proxmox_username] = user
-        hash[:proxmox_password] = password
-      end
-      if user_token?
+
+      if inline_credentials
+        hash[:proxmox_auth_method] = 'user_token'
+        hash[:proxmox_userid] = inline_credentials[:userid]
+        hash[:proxmox_token] = inline_credentials[:token]
+        hash[:proxmox_tokenid] = inline_credentials[:token_id]
+      elsif user_token?
         hash[:proxmox_userid] = user
         hash[:proxmox_token] = token
         hash[:proxmox_tokenid] = token_id
+      elsif access_ticket?
+        hash[:proxmox_username] = user
+        hash[:proxmox_password] = password
       end
+
       hash
     end
 
@@ -149,6 +157,7 @@ module ForemanFogProxmox
     end
 
     def client
+      logger.debug { "Proxmox auth mode: #{client_auth_mode} user=#{user}" } if logger
       @client ||= ::Fog::Proxmox::Compute.new(fog_credentials)
     rescue Excon::Errors::Unauthorized => e
       raise ::Foreman::Exception, token_expired?(e) ? 'User token expired' : "Authentication Failure: #{error_message(e)}"
@@ -183,6 +192,29 @@ module ForemanFogProxmox
 
     def proxmox_host
       URI.parse(url).host
+    end
+
+    def inline_token_credentials
+      return if user.blank? || !user.include?('!')
+
+      userid, token_identifier = user.split('!', 2)
+      return if userid.blank? || token_identifier.blank?
+
+      secret = token.presence || password
+      return if secret.blank?
+
+      {
+        userid: userid,
+        token_id: token_identifier,
+        token: secret,
+      }
+    end
+
+    def client_auth_mode
+      return 'inline_token' if inline_token_credentials
+      return 'token' if user_token?
+
+      'ticket'
     end
   end
 end
