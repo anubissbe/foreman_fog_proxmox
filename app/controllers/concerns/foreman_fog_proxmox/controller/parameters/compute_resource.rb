@@ -27,12 +27,25 @@ module ForemanFogProxmox
           def compute_resource_params_filter
             super.tap do |filter|
               filter.permit :ssl_verify_peer,
-                :ssl_certs, :disable_proxy, :auth_method, :token_id, :token
+                :ssl_certs, :disable_proxy, :auth_method, :token_id, :token,
+                :provider_params => %i[ssl_verify_peer ssl_certs disable_proxy auth_method token_id token]
             end
           end
 
           def compute_resource_params
-            self.class.compute_resource_params_filter.filter_params(params, parameter_filter_context)
+            super.tap do |filtered_params|
+              provider_params = filtered_params.delete(:provider_params)
+              next if provider_params.blank?
+
+              provider_params = provider_params.respond_to?(:to_unsafe_h) ? provider_params.to_unsafe_h : provider_params
+              proxmox_params = provider_params.each_with_object({}) do |(key, value), memo|
+                symbolized_key = key.to_sym
+                next unless %i[ssl_verify_peer ssl_certs disable_proxy auth_method token_id token].include?(symbolized_key)
+
+                memo[symbolized_key] = value unless value.blank?
+              end
+              filtered_params.merge!(proxmox_params)
+            end
           end
         end
       end
