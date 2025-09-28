@@ -31,24 +31,20 @@ module ForemanFogProxmox
     end
 
     def available_linux_operating_systems
-      ['l24', 'l26', 'debian', 'ubuntu', 'centos', 'fedora', 'opensuse', 'archlinux', 'gentoo', 'alpine']
+      ['l24', 'l26', 'debian', 'ubuntu', 'centos', 'fedora', 'opensuse', 'archlinux', 'gentoo', 'alpine', 'devuan', 'nixos']
     end
 
     def available_windows_operating_systems
-      ['wxp', 'w2k', 'w2k3', 'w2k8', 'wvista', 'win7', 'win8', 'win10']
+      ['wxp', 'w2k', 'w2k3', 'w2k8', 'wvista', 'win7', 'win8', 'win10', 'win11']
     end
 
     def os_linux_types_mapping(host)
-      if ['Debian', 'Redhat', 'Suse', 'Altlinux', 'Archlinux', 'Coreos', 'Rancheros',
-          'Gentoo'].include?(host.operatingsystem.type)
-        available_linux_operating_systems
-      else
-        []
-      end
+      linux_families = %w[debian redhat suse altlinux archlinux coreos rancheros gentoo devuan nixos]
+      linux_families.include?(host.operatingsystem.type.to_s.downcase) ? available_linux_operating_systems : []
     end
 
     def os_windows_types_mapping(host)
-      ['Windows'].include?(host.operatingsystem.type) ? available_windows_operating_systems : []
+      host.operatingsystem.type.to_s.casecmp('windows').zero? ? available_windows_operating_systems : []
     end
   end
 end
