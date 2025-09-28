@@ -11,6 +11,12 @@
 
 ### Bug Fixes
 
+## [0.19.2](https://github.com/theforeman/foreman_fog_proxmox/compare/v0.19.1...v0.19.2) (2025-09-28)
+
+### Bug Fixes
+
+* Support inline Proxmox API tokens and guard missing compute profile resources
+
 * Update release-please actions ([#408](https://github.com/theforeman/foreman_fog_proxmox/issues/408)) ([f690854](https://github.com/theforeman/foreman_fog_proxmox/commit/f6908548cd07d313093b89eaecc51dbd0b939071))
 
 ## [0.18.0](https://github.com/theforeman/foreman_fog_proxmox/compare/v0.17.1...v0.18.0) (2025-02-27)

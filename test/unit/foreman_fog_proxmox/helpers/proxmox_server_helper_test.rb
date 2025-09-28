@@ -129,6 +129,18 @@ module ForemanFogProxmox
         assert_equal expected_vm, vm
       end
 
+      test '#vm raises when interfaces or volumes missing' do
+        args_without_volumes = host_form.deep_dup
+        args_without_volumes.delete('volumes_attributes')
+        error = assert_raises(::Foreman::Exception) { parse_typed_vm(args_without_volumes, type) }
+        assert_match(/Missing interfaces\/volumes configuration/, error.message)
+
+        args_without_interfaces = host_form.deep_dup
+        args_without_interfaces.delete('interfaces_attributes')
+        error = assert_raises(::Foreman::Exception) { parse_typed_vm(args_without_interfaces, type) }
+        assert_match(/Missing interfaces\/volumes configuration/, error.message)
+      end
+
       test '#volume with scsi 10Gb' do
         volumes = parse_typed_volumes(host_form['volumes_attributes'], type)
         assert_not volumes.empty?

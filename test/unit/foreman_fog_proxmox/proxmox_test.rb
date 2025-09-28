@@ -54,5 +54,24 @@ module ForemanFogProxmox
       cr.stubs(:node).returns(node)
       assert_equal node, (as_admin { cr.node })
     end
+
+    test '#client uses inline token credentials when user embeds token id' do
+      cr = FactoryBot.build_stubbed(:proxmox_cr, :password => 'supersecret')
+      cr.user = 'root@pam!foreman'
+      cr.auth_method = 'access_ticket'
+      cr.token_id = nil
+      cr.token = nil
+
+      Fog::Proxmox::Compute.expects(:new).with do |options|
+        assert_equal 'user_token', options[:proxmox_auth_method]
+        assert_equal 'root@pam', options[:proxmox_userid]
+        assert_equal 'foreman', options[:proxmox_tokenid]
+        assert_equal 'supersecret', options[:proxmox_token]
+        refute options.key?(:proxmox_username)
+        true
+      end.returns(stub('client'))
+
+      as_admin { cr.send(:client) }
+    end
   end
 end
