@@ -20,14 +20,19 @@
 module ForemanFogProxmox
   module ProxmoxComputeAttributes
     def host_compute_attrs(host)
-      ostype = host.compute_attributes['config_attributes']['ostype']
-      type = host.compute_attributes['type']
+      host.compute_attributes ||= {}
+      attrs = host.compute_attributes
+      attrs['config_attributes'] = {} unless attrs['config_attributes'].is_a?(Hash)
+
+      config = attrs['config_attributes']
+      ostype = config['ostype']
+      type = attrs['type']
       case type
       when 'lxc'
-        host.compute_attributes['config_attributes'].store('hostname', host.name)
+        config.store('hostname', host.name)
       when 'qemu'
-        host.compute_attributes['config_attributes'].store('name', host.name)
-        unless compute_os_types(host).include?(ostype)
+        config.store('name', host.name)
+        if ostype.present? && !compute_os_types(host).include?(ostype)
           raise ::Foreman::Exception,
             format(_('Operating system family %<type>s is not consistent with %<ostype>s'), type: host.operatingsystem.type,
               ostype: ostype)
