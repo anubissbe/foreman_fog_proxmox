@@ -37,6 +37,7 @@ class ForemanFogProxmoxComputeResourceParametersTest < ActiveSupport::TestCase
     assert_equal expected_keys, filter.permitted_kwargs[:attrs]
   end
 
+
   def test_permits_top_level_arguments
     filter = ForemanFogProxmox::Controller::Parameters::ComputeResource::DummyController.compute_resource_params_filter
 
@@ -45,4 +46,5 @@ class ForemanFogProxmoxComputeResourceParametersTest < ActiveSupport::TestCase
       assert_includes filter.permitted_args, arg, "Expected #{arg} to be permitted as a top-level argument"
     end
   end
+
 end
