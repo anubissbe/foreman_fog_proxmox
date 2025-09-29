@@ -97,6 +97,24 @@ module ForemanFogProxmox
         assert_kind_of Hash, config
         assert_equal host.name, config['name']
       end
+
+      it 'initializes missing config attributes for lxc hosts' do
+        physical_nic = FactoryBot.build(:nic_base_empty, :identifier => 'net0', :primary => true,
+          :compute_attributes => { 'dhcp' => '1', 'dhcp6' => '1' })
+        host = FactoryBot.build(
+          :host_empty,
+          :interfaces => [physical_nic],
+          :compute_attributes => {
+            'type' => 'lxc',
+          }
+        )
+
+        assert_nothing_raised { @cr.host_compute_attrs(host) }
+
+        config = host.compute_attributes['config_attributes']
+        assert_kind_of Hash, config
+        assert_equal host.name, config['name']
+      end
     end
 
     describe 'vm_compute_attributes' do
