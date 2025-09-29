@@ -79,6 +79,24 @@ module ForemanFogProxmox
         @cr.host_compute_attrs(host)
         assert_equal host.name, host.compute_attributes['config_attributes']['hostname']
       end
+
+      it 'initializes missing config attributes for qemu hosts' do
+        physical_nic = FactoryBot.build(:nic_base_empty, :identifier => 'net0', :primary => true,
+          :compute_attributes => { 'dhcp' => '1', 'dhcp6' => '1' })
+        host = FactoryBot.build(
+          :host_empty,
+          :interfaces => [physical_nic],
+          :compute_attributes => {
+            'type' => 'qemu',
+          }
+        )
+
+        assert_nothing_raised { @cr.host_compute_attrs(host) }
+
+        config = host.compute_attributes['config_attributes']
+        assert_kind_of Hash, config
+        assert_equal host.name, config['name']
+      end
     end
 
     describe 'vm_compute_attributes' do

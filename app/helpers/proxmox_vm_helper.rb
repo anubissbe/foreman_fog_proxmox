@@ -41,10 +41,25 @@ module ProxmoxVMHelper
     return {} unless args['type'] == type
 
     logger.debug("parse_typed_vm(#{type}): args=#{args}")
+    ensure_vm_resources!(args)
     parsed_vm = parsed_typed_config(args, type)
     parsed_vm = parsed_typed_interfaces(args, type, parsed_vm)
     parsed_vm = parsed_typed_volumes(args, type, parsed_vm)
     logger.debug("parse_typed_vm(#{type}): parsed_vm=#{parsed_vm}")
     parsed_vm
+  end
+
+  private
+
+  def ensure_vm_resources!(args)
+    attrs = args['vm_attrs'] || {}
+    interfaces = attrs['interfaces_attributes'] || args['interfaces_attributes'] ||
+      args.dig('config_attributes', 'interfaces_attributes') || {}
+    volumes = attrs['volumes_attributes'] || args['volumes_attributes'] ||
+      args.dig('config_attributes', 'volumes_attributes') || {}
+
+    return unless interfaces.empty? || volumes.empty?
+
+    raise ::Foreman::Exception, N_('Missing interfaces/volumes configuration')
   end
 end
