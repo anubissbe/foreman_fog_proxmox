@@ -11,11 +11,14 @@
 
 ### Bug Fixes
 
+
 ## [0.19.3](https://github.com/theforeman/foreman_fog_proxmox/compare/v0.19.2...v0.19.3) (2025-09-28)
 
 ### Bug Fixes
 
 * Restore host provisioning against compute profiles missing pre-seeded config attributes
+
+=======
 
 ## [0.19.2](https://github.com/theforeman/foreman_fog_proxmox/compare/v0.19.1...v0.19.2) (2025-09-28)
 
